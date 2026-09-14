@@ -1,0 +1,34 @@
+name: Android APK तयार करा
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: कोड डाउनलोड करा
+        uses: actions/checkout@v4
+
+      - name: Flutter सेटअप
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Android project तयार करा
+        run: flutter create --platforms=android .
+
+      - name: Packages install करा
+        run: flutter pub get
+
+      - name: Release APK तयार करा
+        run: flutter build apk --release
+
+      - name: APK जतन करा
+        uses: actions/upload-artifact@v4
+        with:
+          name: agent-hisab-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
